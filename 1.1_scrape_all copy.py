@@ -48,13 +48,15 @@ def safe_print(*args, **kwargs):
 
 
 def scrape_website(base_url):
-    # 儲存已處理的 URL
     visited_urls = set()
-    visited_urls_lock = threading.Lock()  # 添加鎖來保護 visited_urls
-
-    # 結果儲存
+    visited_urls_lock = threading.Lock()
     scraped_data = []
-    scraped_data_lock = threading.Lock()  # 添加鎖來保護 scraped_data
+    scraped_data_lock = threading.Lock()
+
+    # 創建內部線程池
+    page_executor = ThreadPoolExecutor(max_workers=10)  # 可以調整worker數量
+    futures = set()  # 追蹤所有future
+    futures_lock = threading.Lock()  # 保護futures集合
 
     def scrape_page(url, should_follow_links=True):
         # Remove fragment identifier and trailing slash from URL
@@ -146,9 +148,14 @@ def scrape_website(base_url):
                 if should_follow_links:
                     for link in links:
                         if is_same_domain(link, base_url):
-                            scrape_page(link, should_follow_links=True)
+                            # 替換遞迴調用為線程池提交
+                            with futures_lock:
+                                future = page_executor.submit(scrape_page, link, True)
+                                futures.add(future)
                         else:
-                            scrape_page(link, should_follow_links=False)
+                            with futures_lock:
+                                future = page_executor.submit(scrape_page, link, False)
+                                futures.add(future)
 
         except requests.RequestException as e:
             safe_print(f"Failed to scrape {url}: {e}")
@@ -160,7 +167,20 @@ def scrape_website(base_url):
         return base_netloc == link_netloc
 
     # 開始抓取
-    scrape_page(base_url, should_follow_links=True)
+    initial_future = page_executor.submit(scrape_page, base_url, True)
+    futures.add(initial_future)
+
+    # 等待所有任務完成
+    while True:
+        with futures_lock:
+            if not futures:
+                break
+            done, pending = concurrent.futures.wait(
+                futures, timeout=1, return_when=concurrent.futures.FIRST_COMPLETED
+            )
+            futures.difference_update(done)  # 移除完成的任務
+
+    page_executor.shutdown()
     return scraped_data
 
 
