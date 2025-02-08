@@ -1,29 +1,8 @@
-urls = """https://docs.aftermath.finance/
-https://docs.alphafi.xyz/
-https://learn.bluefin.io/bluefin
-https://docs.bucketprotocol.io/
-https://cetus-1.gitbook.io/cetus-docs
-https://docs.sui.io/standards/deepbook
-https://unihouse.gitbook.io/doubleup
-https://docs.flowx.finance/
-https://haedal-protocol.gitbook.io/haedal-protocol-docs
-https://docs.kai.finance/
-https://docs.kriya.finance/
-https://docs.mstable.io/
-https://doc-en.mole.fi/
-https://naviprotocol.gitbook.io/navi-protocol-docs
-https://omnibtclabs.gitbook.io/omnibtc
-https://docs.scallop.io/
-https://docs.strater.xyz/
-https://docs.sudo.finance/
-https://docs.sui.io/
-https://docs.suilend.fi/
-https://docs.suins.io/
-https://turbos.gitbook.io/turbos
-https://docs.typus.finance/
-https://docs.walrus.site/""".split(
-    "\n"
-)
+from sheet_utils import get_sheet_df
+
+protocol_docs_df = get_sheet_df("main")
+
+urls = protocol_docs_df["Documentation Link"].to_list()
 
 base_urls = list(map(lambda url: "/".join(url.rstrip("/").split("/")[:3]), urls))
 
