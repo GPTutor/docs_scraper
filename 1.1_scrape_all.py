@@ -3,6 +3,8 @@ from sheet_utils import get_sheet_df
 protocol_docs_df = get_sheet_df("main")
 
 urls = protocol_docs_df["Documentation Link"].to_list()
+urls = [url for url in urls if url.startswith("https://")]
+
 
 base_urls = list(map(lambda url: "/".join(url.rstrip("/").split("/")[:3]), urls))
 
