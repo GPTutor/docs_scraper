@@ -2,7 +2,7 @@
 from datetime import datetime
 
 date_str = datetime.now().strftime("%Y%m%d")
-
+collection_name = f"{date_str}_scraped_2"
 
 # %%
 from qdrant_client import QdrantClient, models
@@ -14,7 +14,7 @@ load_dotenv()
 
 client = QdrantClient(url=os.getenv("QDRANT_URL"), api_key=os.getenv("QDRANT_API_KEY"))
 client.create_collection(
-    collection_name=f"{date_str}_scraped",
+    collection_name=collection_name,
     vectors_config={
         "content": models.VectorParams(size=1024, distance=models.Distance.COSINE),
         "paragraph": models.VectorParams(
@@ -58,7 +58,7 @@ for payload in all_data:
         paragraph_embeddings = [[0] * 1024]
     try:
         result = client.upsert(
-            collection_name=f"{date_str}_scraped",
+            collection_name=collection_name,
             points=[
                 models.PointStruct(
                     id=index,
