@@ -30,7 +30,7 @@ for f in embed_files:
         for doc in data:
             doc["source"] = name
             # Generate output filename
-        output_file = f.replace("_embed.1.3.json", ".1.4.json")
+        output_file = f.name.replace("_embed.1.3.json", ".1.4.json")
 
         # Save processed data
         with open(output_file, "w", encoding="utf-8") as f:

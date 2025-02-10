@@ -72,9 +72,7 @@ def scrape_website(base_url):
                             "type": "pdf",
                             "pdf": pdf_base64,
                             "content": "",
-                            # "text_raw": "",
-                            # "text_trafilatura": None,
-                            # "text_readability": "",
+                            "title": None,  # No title for PDFs
                             "links": [],
                         }
                     )
@@ -84,9 +82,11 @@ def scrape_website(base_url):
                 try:
                     soup = BeautifulSoup(response.text, "html.parser")
                     text_raw = soup.get_text(separator=" ", strip=True)
+                    title = soup.title.string if soup.title else ""
                 except Exception as e:
                     print(f"Failed to parse HTML with BeautifulSoup for {url}: {e}")
                     text_raw = ""
+                    title = ""
                     soup = None
 
                 try:
@@ -117,9 +117,7 @@ def scrape_website(base_url):
                             "type": "html",
                             "pdf": None,
                             "content": text_trafilatura,
-                            # "text_raw": text_raw,
-                            # "text_trafilatura": text_trafilatura,
-                            # "text_readability": text_readability,
+                            "title": title,
                             "links": links,
                         }
                     )
@@ -148,7 +146,7 @@ def scrape_website(base_url):
 # 修改主程式部分
 if __name__ == "__main__":
     # 設定最大線程數
-    max_workers = 5  # 可以根據需求調整
+    max_workers = 15  # 可以根據需求調整
 
     with ThreadPoolExecutor(max_workers=max_workers) as executor:
         # 建立任務列表
