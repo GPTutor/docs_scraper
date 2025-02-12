@@ -1,4 +1,5 @@
 .env
 *.json
+*.jsonl
 venv/*
 __pycache__/*

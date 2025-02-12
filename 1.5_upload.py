@@ -45,8 +45,8 @@ for file in embed_files:
 # Remove duplicates based on URL
 seen_urls = set()
 for item in all_data:
-    if item["url"] not in seen_urls:
-        seen_urls.add(item["url"])
+    if item["url"].split("?")[0].split("#")[0] not in seen_urls:
+        seen_urls.add(item["url"].split("?")[0].split("#")[0])
         item["duplicated"] = False
     else:
         item["duplicated"] = True

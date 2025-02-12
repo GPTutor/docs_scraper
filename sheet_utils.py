@@ -52,8 +52,6 @@ def get_gss(key=df_key):
     return gss
 
 
-def overwrite_sheet(sheet, output_df, key=df_key):
-    gss_client = gspread.authorize(credentials)
-    gss = gss_client.open_by_key(key)
+def overwrite_sheet(sheet, output_df):
     sheet.clear()
     sheet.update([output_df.columns.values.tolist()] + output_df.values.tolist())
