@@ -2,7 +2,7 @@
 from datetime import datetime
 
 date_str = datetime.now().strftime("%Y%m%d")
-collection_name = f"{date_str}_scraped_2"
+collection_name = f"{date_str}_scraped"
 
 # %%
 from qdrant_client import QdrantClient, models
